@@ -1,2 +1,2 @@
-# pdf_extractextx
+# pdf_extractext
 

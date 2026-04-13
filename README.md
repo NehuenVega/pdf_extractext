@@ -18,3 +18,8 @@ Extraer texto de un pdf que es proporcionado por el usuario. Despúes se hace un
 - DRY
 - YAGNI
 - SOLID
+## Principios de programación:
+- KISS
+- DRY
+- YAGNI
+- SOLID

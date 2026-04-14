@@ -1,30 +1,61 @@
-# pdf_extractext
+# 📄 pdf_extractext
 
-Extraer texto de un pdf que es proporcionado por el usuario. Despúes se hace un resumen gracias a un modelo de IA
+Herramienta para extraer texto de archivos PDF proporcionados por el usuario y generar un resumen utilizando un modelo de IA.
 
-## Tecnologias:
-- Python
-- UV
-- Modelo de IA (a definir)
-- Ollama (opcional, a definir a futuro)
-- Base de datos no relacional MongoDB
+---
 
-## Metodologías:
-- TDD
-- Proyecto digirido en Github
-- Los seis primeros principios de 12 factor APP
-## Principios de programación:
-- KISS
-- DRY
-- YAGNI
-- SOLID
-## Principios de programación:
-- KISS
-- DRY
-- YAGNI
-- SOLID
+## 🚀 Tecnologías
 
+* Python
+* UV
+* Modelo de IA *(a definir)*
+* Ollama *(opcional, a futuro)*
+* MongoDB *(base de datos no relacional)*
 
+---
+
+## 🧠 Metodologías
+
+* TDD (Test Driven Development)
+* Desarrollo colaborativo en GitHub
+* Principios de **12 Factor App**
+
+---
+
+## 🧩 Principios de programación
+
+* KISS *(Keep It Simple, Stupid)*
+* DRY *(Don't Repeat Yourself)*
+* YAGNI *(You Aren't Gonna Need It)*
+* SOLID
+
+---
+
+## 📦 ¿Qué hace el proyecto?
+
+1. Recibe un archivo PDF
+2. Extrae su contenido de texto
+3. Procesa la información
+4. Genera un resumen utilizando IA
+
+---
+
+## 👥 Autores
+
+* Nehuen Vega
+* Juan Ignacio Perez
+* Ramiro Juarez
+* Alexis Sanchez
+* Lucas Ruiz
+* Maximiliano Serna
+
+---
+
+## 💡 Notas
+
+Este proyecto fue desarrollado como trabajo práctico con el objetivo de explorar técnicas de extracción de texto y el uso de modelos de inteligencia artificial aplicados a documentos.
+
+---
 
 
   

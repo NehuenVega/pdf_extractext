@@ -1,3 +1,0 @@
-import hashlib
-  def generate_checksum(content: bythes):
-      return hashlib.sha256(content).hexdigest()

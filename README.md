@@ -23,10 +23,11 @@ Como usamos MongoDB para gestionar los documentos y sus identificadores únicos 
 PowerShell
 docker run -d --name pdftrack-mongo -p 27017:27017 mongo:latest
 2. Instalación de Dependencias
-Una vez que tengas Docker funcionando, instalá los paquetes necesarios usando el gestor uv:
+Una vez que tengas Docker funcionando, instalá los paquetes necesarios usando el gestor uv
+(lee las dependencias de pyproject.toml y las versiones exactas de uv.lock):
 
 Bash
-uv pip install -r requirements.txt
+uv sync
 3. Lanzamiento de la API
 Con todo listo, ya podés levantar el servidor de FastAPI:
 

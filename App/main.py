@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from App.api.routers import extract_router, document_router # Importamos el nuevo
-from App.api.core.config import settings
+from App.core.config import settings
 
 app = FastAPI(title=settings.PROJECT_NAME, version=settings.VERSION)
 

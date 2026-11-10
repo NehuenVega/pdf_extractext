@@ -1,0 +1,6 @@
+# Fin de linea LF en todos los archivos de texto (los .sh y la config de
+# HAProxy corren en contenedores Linux y fallan con CRLF).
+* text=auto eol=lf
+
+*.pdf binary
+*.png binary

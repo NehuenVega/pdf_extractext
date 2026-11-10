@@ -1,17 +1,18 @@
 [project]
 name = "pdftrack"
 version = "0.1.0"
-description = "Add your description here"
+description = "API para extraer texto de PDFs (FastAPI + MongoDB) con endpoint de Markdown preparado para pruebas de carga"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.136.1",
     "motor>=3.7.1",
+    "orjson>=3.12.0",
     "pydantic>=2.13.3",
     "pydantic-settings>=2.14.0",
-    "pymupdf>=1.27.2.3",
+    "pymupdf>=1.28.2,<2",
     "python-multipart>=0.0.27",
-    "uvicorn>=0.46.0",
+    "uvicorn[standard]>=0.46.0",
 ]
 
 [dependency-groups]

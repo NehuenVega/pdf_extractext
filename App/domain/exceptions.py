@@ -19,3 +19,19 @@ class FileTooLargeError(PdfError):
 
 class UnreadablePdfError(PdfError):
     """Es un PDF, pero está dañado o protegido con contraseña (422)."""
+
+
+class ServiceOverloadedError(Exception):
+    """La réplica no puede aceptar más trabajo en este momento (503)."""
+
+
+class QueueFullError(ServiceOverloadedError):
+    """La cola de espera está llena: el pedido se rechaza al llegar."""
+
+
+class QueueTimeoutError(ServiceOverloadedError):
+    """El pedido esperó demasiado en la cola y ya no es útil procesarlo."""
+
+
+class WorkerCrashedError(Exception):
+    """Un proceso worker murió mientras procesaba un pedido (500)."""

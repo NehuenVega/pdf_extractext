@@ -1,8 +1,13 @@
 from typing import Protocol, List, Optional
-from App.domain.models import ExtractedPage
+from App.domain.models import ExtractedPage, RenderedMarkdown
 
 class IPdfExtractor(Protocol):
     def extract_text(self, file_bytes: bytes) -> List[ExtractedPage]:
+        ...
+
+class IMarkdownExtractor(Protocol):
+    async def extract(self, file_bytes: bytes) -> RenderedMarkdown:
+        """Convierte el PDF a Markdown y devuelve la respuesta ya serializada."""
         ...
 
 # Puerto de la caché: lo único que necesita el servicio de extracción.

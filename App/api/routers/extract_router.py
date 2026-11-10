@@ -3,7 +3,7 @@ from App.services.pdf_service import PdfExtractionService
 from App.api.dependencies import get_pdf_service
 from App.domain.models import PdfExtractionResponse
 
-router = APIRouter(prefix="/v1")
+router = APIRouter(tags=["Extracción"])
 
 
 @router.post("/extract-text", response_model=PdfExtractionResponse)

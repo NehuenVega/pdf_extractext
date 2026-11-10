@@ -1,10 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
-from typing import List
-# Reutilizamos el repositorio inyectado
-from App.api.dependencies import get_document_repository 
+from App.api.dependencies import get_document_repository
 from App.domain.interfaces import IDocumentRepository
 
-router = APIRouter(prefix="/v1/documents", tags=["Documents CRUD"])
+router = APIRouter(prefix="/documents", tags=["Documents CRUD"])
 
 @router.get("/")
 async def list_documents(repo: IDocumentRepository = Depends(get_document_repository)):
@@ -25,7 +23,7 @@ async def update_document(doc_id: str, new_filename: str, repo: IDocumentReposit
     """Actualiza el nombre del archivo guardado."""
     success = await repo.update(doc_id, {"filename": new_filename})
     if not success:
-        raise HTTPException(status_code=404, detail="Documento no encontrado o sin cambios")
+        raise HTTPException(status_code=404, detail="Documento no encontrado")
     return {"message": "Documento actualizado correctamente"}
 
 @router.delete("/{doc_id}")

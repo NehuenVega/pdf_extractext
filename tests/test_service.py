@@ -3,11 +3,11 @@ import hashlib
 import pytest
 from App.services.pdf_service import PdfExtractionService
 from App.domain.exceptions import FileTooLargeError, InvalidPdfError, UnreadablePdfError
-from App.domain.interfaces import IPdfExtractor, IDocumentRepository
+from App.domain.interfaces import IPdfExtractor, IDocumentCache
 from App.domain.models import ExtractedPage
 
 # 1. Repositorio Falso: guarda en memoria lo que el servicio persiste
-class FakeRepository(IDocumentRepository):
+class FakeRepository(IDocumentCache):
     def __init__(self, existing_checksum=None):
         self.existing_checksum = existing_checksum
         self.saved = []
@@ -27,11 +27,6 @@ class FakeRepository(IDocumentRepository):
                 "pages": [{"page_number": 1, "content": "Texto en caché"}]
             }
         return None
-
-    async def get_all(self): return []
-    async def get_by_id(self, doc_id: str): return None
-    async def update(self, doc_id: str, update_data: dict): return False
-    async def delete(self, doc_id: str): return False
 
 # 2. Extractores Falsos
 class FakeExtractor(IPdfExtractor):

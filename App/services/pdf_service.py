@@ -3,12 +3,12 @@ import hashlib
 from typing import List
 
 from App.domain.exceptions import FileTooLargeError, InvalidPdfError
-from App.domain.interfaces import IDocumentRepository, IPdfExtractor
+from App.domain.interfaces import IDocumentCache, IPdfExtractor
 from App.domain.models import ExtractedPage, PdfExtractionResponse
 
 
 class PdfExtractionService:
-    def __init__(self, extractor: IPdfExtractor, repository: IDocumentRepository, max_file_size_mb: int):
+    def __init__(self, extractor: IPdfExtractor, repository: IDocumentCache, max_file_size_mb: int):
         self.extractor = extractor
         self.repository = repository
         self.max_file_size_mb = max_file_size_mb

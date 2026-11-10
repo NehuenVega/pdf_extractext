@@ -12,6 +12,5 @@ async def extract_text(
     service: PdfExtractionService = Depends(get_pdf_service)
 ):
     content = await file.read()
-    
-    # ¡Agregamos el 'await' aquí!
-    return await service.process_pdf(file.filename, content)
+    # Un upload puede llegar sin nombre de archivo: se valida como "".
+    return await service.process_pdf(file.filename or "", content)

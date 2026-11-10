@@ -21,9 +21,19 @@ dev = [
     "pytest>=9.0.3",
     "pytest-asyncio>=1.3.0",
 ]
+# Scripts de investigación (scripts/): motores comparados en el ADR-0001 y
+# gráficos del informe. No van en la imagen Docker.
+scripts = [
+    "matplotlib>=3.11.2",
+    "pdfplumber>=0.11.10",
+    "psutil>=7.2.2",
+    "pymupdf4llm>=1.28.2,<2",
+    "pypdf>=6.19.0",
+    "pypdfium2>=5.14.0",
+]
 
 [tool.pytest.ini_options]
-pythonpath = ["."]
+pythonpath = [".", "scripts"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"

@@ -18,6 +18,7 @@
 import http from 'k6/http';
 import { check } from 'k6';
 import exec from 'k6/execution';
+import { open, SeekMode } from 'k6/experimental/fs';
 
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:8080';
 const PDF_DIR = __ENV.PDF_DIR || '../pdfs';
@@ -28,12 +29,32 @@ if (!__ENV.PDF_FILES) {
   throw new Error('Falta PDF_FILES (lista de PDFs separados por coma). Usá run.sh.');
 }
 
-// open() solo funciona en el contexto de inicialización: los PDFs se leen una
-// vez por VU, antes de que empiece la prueba, y no durante la medición.
-const PDFS = __ENV.PDF_FILES.split(',').map((name) => ({
-  name,
-  data: open(`${PDF_DIR}/${name}`, 'b'),
-}));
+// Los PDFs se abren con k6/experimental/fs, que lee cada archivo una sola vez
+// y comparte el contenido entre todos los VUs. Con el open() clásico cada VU
+// guardaba su propia copia (100 VUs x 14 MB = 1,4 GB) y el generador corre en
+// la misma PC que el sistema medido. k6 no permite await en el contexto de
+// inicialización, por eso la función async.
+const PDFS = [];
+(async function () {
+  for (const name of __ENV.PDF_FILES.split(',')) {
+    const file = await open(`${PDF_DIR}/${name}`);
+    PDFS.push({ name, file, size: (await file.stat()).size });
+  }
+})();
+
+// Copia el PDF a un buffer propio del pedido (el archivo compartido no se
+// puede mandar directo). El buffer se libera al terminar la iteración.
+async function readPdf(pdf) {
+  const buffer = new Uint8Array(pdf.size);
+  await pdf.file.seek(0, SeekMode.Start);
+  let offset = 0;
+  while (offset < pdf.size) {
+    const read = await pdf.file.read(buffer.subarray(offset));
+    if (read === null) break;
+    offset += read;
+  }
+  return buffer.buffer;
+}
 
 // Métricas del profesor (consigna, "Benchmark de Referencia", prueba A).
 const PROFESSOR = {
@@ -69,24 +90,28 @@ export const options = {
   summaryTrendStats: ['avg', 'min', 'med', 'p(90)', 'p(95)', 'p(99)', 'max'],
 };
 
-export default function () {
+export default async function () {
   // Rotación determinística de los PDFs: cada VU arranca en uno distinto y
   // va avanzando en cada iteración, así todos los PDFs se piden por igual.
   const index = (exec.vu.idInTest + exec.vu.iterationInScenario) % PDFS.length;
   const pdf = PDFS[index];
+  const data = await readPdf(pdf);
 
   const params = { tags: { pdf: pdf.name }, timeout: '60s' };
   const response =
     UPLOAD_MODE === 'binary'
-      ? http.post(`${BASE_URL}/extract`, pdf.data, {
+      ? http.post(`${BASE_URL}/extract`, data, {
           ...params,
           headers: { 'Content-Type': 'application/pdf' },
         })
-      : http.post(`${BASE_URL}/extract`, { file: http.file(pdf.data, pdf.name, 'application/pdf') }, params);
+      : http.post(`${BASE_URL}/extract`, { file: http.file(data, pdf.name, 'application/pdf') }, params);
 
+  // La respuesta se parsea una sola vez: puede pesar cientos de KB y parsearla
+  // en JavaScript le cuesta CPU al generador.
+  const body = response.status === 200 ? response.json() : null;
   check(response, {
     'status 200': (r) => r.status === 200,
-    'trae content y page_count': (r) => r.status === 200 && r.json('page_count') > 0 && typeof r.json('content') === 'string',
+    'trae content y page_count': () => body !== null && body.page_count > 0 && typeof body.content === 'string',
   });
 }
 

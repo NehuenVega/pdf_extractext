@@ -1,0 +1,133 @@
+{
+  "capacity_rps": 28.449502133712656,
+  "service_times_s": [
+    0.005,
+    0.035,
+    0.464,
+    0.199
+  ],
+  "sizes_bytes": [
+    93184,
+    147456,
+    737280,
+    10063872
+  ],
+  "k6": {
+    "Sin backpressure (procesador compartido)": {
+      "requests": 1070,
+      "rate": 26.72604625076905,
+      "error_rate": 0.0,
+      "p50_s": 0.7046239839795572,
+      "p90_s": 9.231604973793717,
+      "p95_s": 9.280000000000005,
+      "max_s": 9.280000000000015
+    },
+    "Cola FIFO, espera máx. 20 s": {
+      "requests": 1124,
+      "rate": 27.89843381568175,
+      "error_rate": 0.0,
+      "p50_s": 3.224,
+      "p90_s": 3.717999999999985,
+      "p95_s": 3.8316999999999917,
+      "max_s": 4.176999999999996
+    },
+    "Cola FIFO, espera máx. 25 s (elegida)": {
+      "requests": 1124,
+      "rate": 27.89843381568175,
+      "error_rate": 0.0,
+      "p50_s": 3.224,
+      "p90_s": 3.717999999999985,
+      "p95_s": 3.8316999999999917,
+      "max_s": 4.176999999999996
+    },
+    "Cola FIFO 25 s, 2 extracciones por réplica": {
+      "requests": 1116,
+      "rate": 27.816550348953132,
+      "error_rate": 0.0,
+      "p50_s": 3.190999999999999,
+      "p90_s": 4.003000000000004,
+      "p95_s": 4.140000000000015,
+      "max_s": 4.350000000000007
+    },
+    "Chicos primero (+2 s), espera máx. 25 s": {
+      "requests": 1111,
+      "rate": 27.44226256638265,
+      "error_rate": 0.0,
+      "p50_s": 2.6120000000000005,
+      "p90_s": 5.005000000000003,
+      "p95_s": 5.220999999999989,
+      "max_s": 5.859999999999982
+    },
+    "Chicos siempre primero, espera máx. 25 s": {
+      "requests": 1114,
+      "rate": 26.553524181822553,
+      "error_rate": 0.0,
+      "p50_s": 0.9775,
+      "p90_s": 7.093999999999998,
+      "p95_s": 7.261699999999991,
+      "max_s": 7.570999999999987
+    }
+  },
+  "vegeta": {
+    "Sin backpressure (procesador compartido)": {
+      "requests": 1500,
+      "successes": 1313,
+      "success_rate": 0.8753333333333333,
+      "client_timeouts": 187,
+      "rejected_503": 0,
+      "throughput": 24.859212392167485,
+      "p50_all_s": 3.6141477778687303,
+      "p50_success_s": 2.733267868617123
+    },
+    "Cola FIFO, espera máx. 20 s": {
+      "requests": 1500,
+      "successes": 1420,
+      "success_rate": 0.9466666666666667,
+      "client_timeouts": 0,
+      "rejected_503": 80,
+      "throughput": 28.22500496919108,
+      "p50_all_s": 11.434999999999993,
+      "p50_success_s": 10.828999999999994
+    },
+    "Cola FIFO, espera máx. 25 s (elegida)": {
+      "requests": 1500,
+      "successes": 1500,
+      "success_rate": 1.0,
+      "client_timeouts": 0,
+      "rejected_503": 0,
+      "throughput": 28.28587591929104,
+      "p50_all_s": 11.434999999999993,
+      "p50_success_s": 11.434999999999993
+    },
+    "Cola FIFO 25 s, 2 extracciones por réplica": {
+      "requests": 1500,
+      "successes": 1500,
+      "success_rate": 1.0,
+      "client_timeouts": 0,
+      "rejected_503": 0,
+      "throughput": 28.28587591929097,
+      "p50_all_s": 11.422,
+      "p50_success_s": 11.422
+    },
+    "Chicos primero (+2 s), espera máx. 25 s": {
+      "requests": 1500,
+      "successes": 1500,
+      "success_rate": 1.0,
+      "client_timeouts": 0,
+      "rejected_503": 0,
+      "throughput": 28.297081627648208,
+      "p50_all_s": 9.868999999999993,
+      "p50_success_s": 9.868999999999993
+    },
+    "Chicos siempre primero, espera máx. 25 s": {
+      "requests": 1500,
+      "successes": 1500,
+      "success_rate": 1.0,
+      "client_timeouts": 0,
+      "rejected_503": 0,
+      "throughput": 28.2954802686185,
+      "p50_all_s": 0.21999999999999975,
+      "p50_success_s": 0.21999999999999975
+    }
+  }
+}

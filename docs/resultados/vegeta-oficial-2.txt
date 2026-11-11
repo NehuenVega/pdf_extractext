@@ -1,0 +1,18 @@
+Requests      [total, rate, throughput]         1500, 50.03, 28.79
+Duration      [total, attack, wait]             52.11s, 29.983s, 22.126s
+Latencies     [min, mean, 50, 90, 95, 99, max]  41.677ms, 7.131s, 1.092s, 19.847s, 21.007s, 21.954s, 22.159s
+Bytes In      [total, mean]                     0, 0.00
+Bytes Out     [total, mean]                     5144943750, 3429962.50
+Success       [ratio]                           100.00%
+Status Codes  [code:count]                      200:1500  
+Error Set:
+Bucket         #    %       Histogram
+[0s,    1s]    741  49.40%  #####################################
+[1s,    2s]    58   3.87%   ##
+[2s,    5s]    46   3.07%   ##
+[5s,    10s]   108  7.20%   #####
+[10s,   15s]   140  9.33%   #######
+[15s,   20s]   264  17.60%  #############
+[20s,   25s]   143  9.53%   #######
+[25s,   30s]   0    0.00%   
+[30s,   +Inf]  0    0.00%   

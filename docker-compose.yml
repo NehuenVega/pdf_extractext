@@ -93,9 +93,14 @@ services:
       - mongo-data:/data/db
     healthcheck:
       test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
-      interval: 5s
+      # mongosh es un proceso de Node: lanzarlo cada pocos segundos le saca
+      # CPU a las réplicas durante las pruebas. Se chequea seguido solo
+      # mientras arranca y después cada 30 s.
+      start_period: 30s
+      start_interval: 2s
+      interval: 30s
       timeout: 5s
-      retries: 10
+      retries: 5
     deploy:
       resources:
         limits:

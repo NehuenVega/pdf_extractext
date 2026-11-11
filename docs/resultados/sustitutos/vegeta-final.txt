@@ -1,0 +1,19 @@
+Requests      [total, rate, throughput]         1500, 50.03, 21.77
+Duration      [total, attack, wait]             55.408s, 29.98s, 25.427s
+Latencies     [min, mean, 50, 90, 95, 99, max]  9.37ms, 10.758s, 952.747ms, 25.301s, 25.524s, 25.77s, 26.142s
+Bytes In      [total, mean]                     0, 0.00
+Bytes Out     [total, mean]                     4140360000, 2760240.00
+Success       [ratio]                           80.40%
+Status Codes  [code:count]                      200:1206  503:294  
+Error Set:
+503 Service Unavailable
+Bucket         #    %       Histogram
+[0s,    1s]    754  50.27%  #####################################
+[1s,    2s]    8    0.53%   
+[2s,    5s]    25   1.67%   #
+[5s,    10s]   44   2.93%   ##
+[10s,   15s]   48   3.20%   ##
+[15s,   20s]   57   3.80%   ##
+[20s,   25s]   74   4.93%   ###
+[25s,   30s]   490  32.67%  ########################
+[30s,   +Inf]  0    0.00%   

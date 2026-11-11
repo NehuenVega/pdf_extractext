@@ -17,6 +17,7 @@ importar qué endpoint falló.
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from App.domain.exceptions import (
     FileTooLargeError,
@@ -30,6 +31,13 @@ from App.domain.exceptions import (
 # Es corto a propósito: las colas se vacían en pocos segundos.
 RETRY_AFTER_SECONDS = 2
 
+# Mensajes que Starlette pone solo (ruta o método inexistente), en castellano
+# como el resto de la API.
+SPANISH_HTTP_DETAILS = {
+    "Not Found": "No encontrado.",
+    "Method Not Allowed": "Método no permitido.",
+}
+
 STATUS_BY_ERROR: dict[type[Exception], int] = {
     InvalidPdfError: 400,
     FileTooLargeError: 413,
@@ -42,6 +50,7 @@ STATUS_BY_ERROR: dict[type[Exception], int] = {
 def register_exception_handlers(app: FastAPI) -> None:
     for error_type, status in STATUS_BY_ERROR.items():
         app.add_exception_handler(error_type, _handler_for(status))
+    app.add_exception_handler(StarletteHTTPException, _http_error)
     app.add_exception_handler(Exception, _unexpected)
 
 
@@ -52,6 +61,13 @@ def _handler_for(status: int):
         return JSONResponse(status_code=status, content={"detail": str(error)}, headers=headers)
 
     return handler
+
+
+async def _http_error(_: Request, error: Exception) -> JSONResponse:
+    assert isinstance(error, StarletteHTTPException)
+    detail = SPANISH_HTTP_DETAILS.get(error.detail, error.detail)
+    # Se conservan los encabezados (por ejemplo, Allow en un 405).
+    return JSONResponse(status_code=error.status_code, content={"detail": detail}, headers=error.headers)
 
 
 async def _unexpected(_: Request, error: Exception) -> JSONResponse:

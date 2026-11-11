@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from App.api.access_log import AccessLogMiddleware
+from App.api.docs import register_docs
 from App.api.errors import register_exception_handlers
 from App.api.routers import extract_router, document_router, markdown_router
 from App.core.config import Settings, get_settings
@@ -12,6 +13,14 @@ from App.services.admission import AdmissionController
 from App.services.markdown_service import MarkdownExtractionService
 
 logger = logging.getLogger(__name__)
+
+# Secciones de /docs, en este orden.
+OPENAPI_TAGS = [
+    {"name": "Extracción", "description": "Texto por página, con caché en MongoDB"},
+    {"name": "Documentos", "description": "Documentos guardados (CRUD)"},
+    {"name": "Markdown", "description": "PDF → Markdown, el endpoint de las pruebas de carga"},
+    {"name": "Estado", "description": "Para el balanceador y para chequear que la API responde"},
+]
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -38,7 +47,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         markdown_extractor.close()
         app.state.repository.close()
 
-    app = FastAPI(title=settings.PROJECT_NAME, version=settings.VERSION, lifespan=lifespan)
+    app = FastAPI(
+        title=settings.PROJECT_NAME,
+        version=settings.VERSION,
+        openapi_tags=OPENAPI_TAGS,
+        docs_url=None,  # /docs lo arma register_docs con estilo propio
+        lifespan=lifespan,
+    )
     app.state.settings = settings
     app.add_middleware(AccessLogMiddleware)
     register_exception_handlers(app)
@@ -46,8 +61,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(extract_router.router, prefix=settings.API_V1_STR)
     app.include_router(document_router.router, prefix=settings.API_V1_STR)
     app.include_router(markdown_router.router)
+    register_docs(
+        app,
+        subtitle="API PDFtrack: extracción de texto de PDFs con caché en MongoDB y conversión a Markdown, "
+        "lista para correr en 5 réplicas detrás de HAProxy.",
+        highlights=["FastAPI", "MongoDB", "PyMuPDF", "5 réplicas · HAProxy", "Probado con k6 y Vegeta"],
+    )
 
-    @app.get("/")
+    @app.get("/", tags=["Estado"], summary="Estado de la API")
     def read_root():
         return {"message": "PDFtrack API is running"}
 

@@ -2,15 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException
 from App.api.dependencies import get_document_repository
 from App.domain.interfaces import IDocumentRepository
 
-router = APIRouter(prefix="/documents", tags=["Documents CRUD"])
+router = APIRouter(prefix="/documents", tags=["Documentos"])
 
-@router.get("/")
+@router.get("/", summary="Listar documentos")
 async def list_documents(repo: IDocumentRepository = Depends(get_document_repository)):
     """Lista todos los PDFs procesados."""
     docs = await repo.get_all()
     return {"total": len(docs), "documents": docs}
 
-@router.get("/{doc_id}")
+@router.get("/{doc_id}", summary="Ver un documento")
 async def get_document(doc_id: str, repo: IDocumentRepository = Depends(get_document_repository)):
     """Trae el detalle de un PDF por su ID."""
     doc = await repo.get_by_id(doc_id)
@@ -18,7 +18,7 @@ async def get_document(doc_id: str, repo: IDocumentRepository = Depends(get_docu
         raise HTTPException(status_code=404, detail="Documento no encontrado")
     return doc
 
-@router.patch("/{doc_id}")
+@router.patch("/{doc_id}", summary="Renombrar un documento")
 async def update_document(doc_id: str, new_filename: str, repo: IDocumentRepository = Depends(get_document_repository)):
     """Actualiza el nombre del archivo guardado."""
     success = await repo.update(doc_id, {"filename": new_filename})
@@ -26,7 +26,7 @@ async def update_document(doc_id: str, new_filename: str, repo: IDocumentReposit
         raise HTTPException(status_code=404, detail="Documento no encontrado")
     return {"message": "Documento actualizado correctamente"}
 
-@router.delete("/{doc_id}")
+@router.delete("/{doc_id}", summary="Borrar un documento")
 async def delete_document(doc_id: str, repo: IDocumentRepository = Depends(get_document_repository)):
     """Elimina un documento de la base de datos."""
     success = await repo.delete(doc_id)

@@ -13,7 +13,7 @@ from App.api.uploads import read_pdf_upload
 from App.domain.models import MarkdownExtractionResponse
 from App.services.markdown_service import MarkdownExtractionService
 
-router = APIRouter(tags=["Markdown"])
+router = APIRouter()
 
 # El body se lee a mano (ver App/api/uploads.py), así que FastAPI no puede
 # deducir su formato: se declara acá para que aparezca en /docs.
@@ -32,7 +32,13 @@ PDF_REQUEST_BODY = {
 }
 
 
-@router.post("/extract", response_model=MarkdownExtractionResponse, openapi_extra={"requestBody": PDF_REQUEST_BODY})
+@router.post(
+    "/extract",
+    response_model=MarkdownExtractionResponse,
+    tags=["Markdown"],
+    summary="Convertir PDF a Markdown",
+    openapi_extra={"requestBody": PDF_REQUEST_BODY},
+)
 async def extract_markdown(
     request: Request,
     service: MarkdownExtractionService = Depends(get_markdown_service),
@@ -57,7 +63,7 @@ async def extract_markdown(
     return Response(result.body, media_type="application/json", headers=headers)
 
 
-@router.get("/health")
+@router.get("/health", tags=["Estado"], summary="Chequeo de salud")
 async def health(service: MarkdownExtractionService = Depends(get_markdown_service)) -> dict:
     """Lo usa el balanceador para saber si la réplica está viva."""
     return {"status": "ok", "running": service.admission.running, "waiting": service.admission.waiting}

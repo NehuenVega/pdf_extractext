@@ -1,14 +1,17 @@
 from motor.motor_asyncio import AsyncIOMotorClient
-from App.domain.interfaces import IDocumentRepository
-from App.core.config import settings
+from App.domain.interfaces import IDocumentCache, IDocumentRepository
 from typing import Optional, List
 from bson.objectid import ObjectId
 
-class MongoDocumentRepository(IDocumentRepository):
-    def __init__(self):
-        self.client = AsyncIOMotorClient(settings.MONGO_URI)
-        self.db = self.client[settings.DB_NAME]
+class MongoDocumentRepository(IDocumentCache, IDocumentRepository):
+    def __init__(self, mongo_uri: str, db_name: str):
+        # Un solo cliente por aplicación: Motor maneja su propio pool de conexiones.
+        self.client = AsyncIOMotorClient(mongo_uri)
+        self.db = self.client[db_name]
         self.collection = self.db["documents"]
+
+    def close(self) -> None:
+        self.client.close()
 
     async def save_document(self, document_data: dict) -> str:
         result = await self.collection.insert_one(document_data)
@@ -37,10 +40,12 @@ class MongoDocumentRepository(IDocumentRepository):
     async def update(self, doc_id: str, update_data: dict) -> bool:
         try:
             result = await self.collection.update_one(
-                {"_id": ObjectId(doc_id)}, 
+                {"_id": ObjectId(doc_id)},
                 {"$set": update_data}
             )
-            return result.modified_count > 0
+            # matched_count y no modified_count: guardar el mismo nombre que
+            # ya tenía no es un error, el documento existe.
+            return result.matched_count > 0
         except Exception:
             return False
 

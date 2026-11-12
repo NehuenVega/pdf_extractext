@@ -1,0 +1,155 @@
+# Sistema completo: 5 réplicas de la API detrás de HAProxy, más MongoDB.
+#
+#   Levantar:             docker compose up --build
+#   API y /docs:          http://localhost:8080  (todo pasa por HAProxy)
+#   Prueba spike (k6):    docker compose --profile stress run --rm k6
+#   Prueba fija (Vegeta): docker compose --profile stress run --rm vegeta
+#   Panel de HAProxy:     http://localhost:8404
+#
+# Toda la configuración tiene un valor por defecto, así que no hace falta un
+# archivo .env. Para probar variantes (por ejemplo, para la comparación
+# "antes vs. después"), se pueden pisar valores: ver .env.example.
+
+name: pdftrack
+
+services:
+  extractor:
+    build: .
+    image: pdftrack-api:1.0.0
+    # tini como PID 1: reenvía SIGTERM a Python (apagado ordenado) y recoge
+    # procesos huérfanos.
+    init: true
+    # El proceso ya corre sin root (ver Dockerfile); además no puede ganar
+    # privilegios nuevos aunque alguien lograra ejecutar código adentro.
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      PORT: "8000"
+      MONGO_URI: mongodb://mongo:27017
+      EXTRACTION_WORKERS: ${EXTRACTION_WORKERS:-1}
+      MAX_QUEUE_SIZE: ${MAX_QUEUE_SIZE:-8}
+      QUEUE_TIMEOUT_SECONDS: ${QUEUE_TIMEOUT_SECONDS:-25}
+      MAX_FILE_SIZE_MB: ${MAX_FILE_SIZE_MB:-32}
+      UPLOAD_TIMEOUT_SECONDS: ${UPLOAD_TIMEOUT_SECONDS:-15}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    depends_on:
+      mongo:
+        condition: service_healthy
+    deploy:
+      # Escalabilidad horizontal controlada: hasta 5 réplicas (consigna).
+      replicas: ${REPLICAS:-5}
+      resources:
+        # Límites explícitos por réplica, iguales para todos los grupos.
+        limits:
+          cpus: "1.0"
+          memory: 1G
+    restart: unless-stopped
+
+  proxy:
+    image: haproxy:3.4-alpine
+    ports:
+      - "8080:8080" # API: POST http://localhost:8080/extract
+      - "8404:8404" # Panel de estadísticas
+    volumes:
+      - ./proxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    environment:
+      HAPROXY_SERVER_MAXCONN: ${HAPROXY_SERVER_MAXCONN:-1}
+      HAPROXY_QUEUE_TIMEOUT: ${HAPROXY_QUEUE_TIMEOUT:-25s}
+      HAPROXY_MAX_QUEUE: ${HAPROXY_MAX_QUEUE:-1000}
+      HAPROXY_SMALL_PDF_BYTES: ${HAPROXY_SMALL_PDF_BYTES:-1048576}
+      HAPROXY_EXPECTED_SERVERS: ${REPLICAS:-5}
+    healthcheck:
+      # Sano recién cuando HAProxy ve disponibles todas las réplicas.
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/haproxy-health"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+    depends_on:
+      extractor:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+    restart: unless-stopped
+
+  # Base de datos del CRUD y de la caché de /api/v1/extract-text.
+  # POST /extract no la usa, así que no influye en las pruebas de carga.
+  mongo:
+    image: mongo:8.0
+    # Por defecto WiredTiger toma la mitad de la RAM del host como caché,
+    # sin mirar el límite del contenedor: se acota para que entre en 1 GB.
+    command: ["--wiredTigerCacheSizeGB", "0.25"]
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      # mongosh es un proceso de Node: lanzarlo cada pocos segundos le saca
+      # CPU a las réplicas durante las pruebas. Se chequea seguido solo
+      # mientras arranca y después cada 30 s.
+      start_period: 30s
+      start_interval: 2s
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+    restart: unless-stopped
+
+  # ---- Generadores de carga (solo con --profile stress) -------------------
+  # No forman parte del sistema bajo prueba. Tienen límites explícitos pero
+  # holgados, para que el generador nunca sea el cuello de botella.
+
+  k6:
+    image: grafana/k6:2.3.0
+    profiles: ["stress"]
+    # Root solo para poder escribir los resultados en la carpeta montada
+    # (en Linux, el usuario por defecto de la imagen no tiene permiso).
+    user: "0:0"
+    entrypoint: ["sh", "/stress/k6/run.sh"]
+    environment:
+      BASE_URL: http://proxy:8080
+    volumes:
+      - ./tests/stress:/stress
+    depends_on:
+      proxy:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          # Medido: con 100 VUs, k6 usa ~3 GB (cada VU guarda su copia de los
+          # PDFs y arma el body en memoria). Con 3 GB llegaba al límite.
+          memory: 4G
+
+  vegeta:
+    build: tests/stress/vegeta
+    image: vegeta:12.13.0
+    profiles: ["stress"]
+    environment:
+      TARGET_URL: http://proxy:8080/extract
+    volumes:
+      - ./tests/stress:/stress
+    depends_on:
+      proxy:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+
+volumes:
+  mongo-data:

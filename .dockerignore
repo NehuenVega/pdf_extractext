@@ -1,0 +1,14 @@
+# La imagen solo necesita pyproject.toml, uv.lock y App/. Excluir el resto hace
+# el build más rápido y evita meter archivos pesados (PDFs, resultados) o locales.
+.git
+.venv
+**/__pycache__
+**/*.pyc
+.pytest_cache
+.ruff_cache
+docs
+scripts
+tests
+proxy
+*.md
+.env

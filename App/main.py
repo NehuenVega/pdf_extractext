@@ -1,13 +1,78 @@
+import logging
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
-from App.api.routers import extract_router, document_router # Importamos el nuevo
-from App.api.core.config import settings
+from App.api.access_log import AccessLogMiddleware
+from App.api.docs import register_docs
+from App.api.errors import register_exception_handlers
+from App.api.routers import extract_router, document_router, markdown_router
+from App.core.config import Settings, get_settings
+from App.infrastructure.mongo_repository import MongoDocumentRepository
+from App.infrastructure.process_pool_extractor import ProcessPoolMarkdownExtractor
+from App.services.admission import AdmissionController
+from App.services.markdown_service import MarkdownExtractionService
 
-app = FastAPI(title=settings.PROJECT_NAME, version=settings.VERSION)
+logger = logging.getLogger(__name__)
 
-# Rutas
-app.include_router(extract_router.router, prefix="/api")
-app.include_router(document_router.router, prefix="/api") # Conectamos el CRUD
+# Secciones de /docs, en este orden.
+OPENAPI_TAGS = [
+    {"name": "Extracción", "description": "Texto por página, con caché en MongoDB"},
+    {"name": "Documentos", "description": "Documentos guardados (CRUD)"},
+    {"name": "Markdown", "description": "PDF → Markdown, el endpoint de las pruebas de carga"},
+    {"name": "Estado", "description": "Para el balanceador y para chequear que la API responde"},
+]
 
-@app.get("/")
-def read_root():
-    return {"message": "PDFtrack API is running"}
+
+def create_app(settings: Settings | None = None) -> FastAPI:
+    """Arma la aplicación: es el único lugar que lee la configuración y elige
+    qué adaptador concreto (Mongo, PyMuPDF, pool de procesos) implementa cada puerto."""
+    settings = settings or get_settings()
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        # Los workers arrancan antes de aceptar tráfico y se apagan después de
+        # terminar los pedidos en curso (12-Factor, IX: desechabilidad).
+        markdown_extractor = ProcessPoolMarkdownExtractor(workers=settings.EXTRACTION_WORKERS)
+        await markdown_extractor.start()
+        admission = AdmissionController(
+            max_concurrent=settings.EXTRACTION_WORKERS,
+            max_waiting=settings.MAX_QUEUE_SIZE,
+            wait_timeout=settings.QUEUE_TIMEOUT_SECONDS,
+        )
+        app.state.markdown_service = MarkdownExtractionService(markdown_extractor, admission)
+        app.state.repository = MongoDocumentRepository(settings.MONGO_URI, settings.DB_NAME)
+        logger.info("Servicio listo", extra={"fields": settings.model_dump(exclude={"MONGO_URI"})})
+        yield
+        logger.info("Apagando: se esperan los pedidos en curso")
+        markdown_extractor.close()
+        app.state.repository.close()
+
+    app = FastAPI(
+        title=settings.PROJECT_NAME,
+        version=settings.VERSION,
+        openapi_tags=OPENAPI_TAGS,
+        docs_url=None,  # /docs lo arma register_docs con estilo propio
+        lifespan=lifespan,
+    )
+    app.state.settings = settings
+    app.add_middleware(AccessLogMiddleware)
+    register_exception_handlers(app)
+
+    app.include_router(extract_router.router, prefix=settings.API_V1_STR)
+    app.include_router(document_router.router, prefix=settings.API_V1_STR)
+    app.include_router(markdown_router.router)
+    register_docs(
+        app,
+        subtitle="API PDFtrack: extracción de texto de PDFs con caché en MongoDB y conversión a Markdown, "
+        "lista para correr en 5 réplicas detrás de HAProxy.",
+        highlights=["FastAPI", "MongoDB", "PyMuPDF", "5 réplicas · HAProxy", "Probado con k6 y Vegeta"],
+    )
+
+    @app.get("/", tags=["Estado"], summary="Estado de la API")
+    def read_root():
+        return {"message": "PDFtrack API is running"}
+
+    return app
+
+
+app = create_app()

@@ -1,0 +1,361 @@
+{
+  "metadata": {
+    "python": "3.13.0",
+    "platform": "win32",
+    "repeat": 5
+  },
+  "results": [
+    {
+      "engine": "pymupdf4llm",
+      "label": "pymupdf4llm (por defecto, Markdown)",
+      "pdf": "01-liviano.pdf",
+      "runs": 5,
+      "median_s": 1.1651597000018228,
+      "min_s": 1.006572700003744,
+      "peak_mb": 307.7734375,
+      "baseline_mb": 180.18359375,
+      "chars": 3562
+    },
+    {
+      "engine": "pymupdf4llm-liviano",
+      "label": "pymupdf4llm (modo cl\u00e1sico liviano, Markdown)",
+      "pdf": "01-liviano.pdf",
+      "runs": 5,
+      "median_s": 0.039893699999083765,
+      "min_s": 0.03351610001118388,
+      "peak_mb": 144.234375,
+      "baseline_mb": 119.89453125,
+      "chars": 3562
+    },
+    {
+      "engine": "pdfplumber",
+      "label": "pdfplumber (texto)",
+      "pdf": "01-liviano.pdf",
+      "runs": 5,
+      "median_s": 0.13326590000360738,
+      "min_s": 0.13008540000009816,
+      "peak_mb": 76.53515625,
+      "baseline_mb": 40.375,
+      "chars": 3529
+    },
+    {
+      "engine": "pypdf",
+      "label": "pypdf (texto)",
+      "pdf": "01-liviano.pdf",
+      "runs": 5,
+      "median_s": 0.04207779999705963,
+      "min_s": 0.040011400007642806,
+      "peak_mb": 37.8984375,
+      "baseline_mb": 35.10546875,
+      "chars": 3511
+    },
+    {
+      "engine": "pypdfium2",
+      "label": "pypdfium2 (texto)",
+      "pdf": "01-liviano.pdf",
+      "runs": 5,
+      "median_s": 0.006408899993402883,
+      "min_s": 0.005428599994047545,
+      "peak_mb": 28.94921875,
+      "baseline_mb": 28.0234375,
+      "chars": 3574
+    },
+    {
+      "engine": "pymupdf-texto",
+      "label": "PyMuPDF get_text (texto)",
+      "pdf": "01-liviano.pdf",
+      "runs": 5,
+      "median_s": 0.006040200009010732,
+      "min_s": 0.00532710000697989,
+      "peak_mb": 47.484375,
+      "baseline_mb": 46.76953125,
+      "chars": 3513
+    },
+    {
+      "engine": "pymupdf-dict",
+      "label": "PyMuPDF get_text('dict') (texto + tama\u00f1os)",
+      "pdf": "01-liviano.pdf",
+      "runs": 5,
+      "median_s": 0.00650869999662973,
+      "min_s": 0.006362999993143603,
+      "peak_mb": 47.5546875,
+      "baseline_mb": 46.7109375,
+      "chars": 3511
+    },
+    {
+      "engine": "nuestro",
+      "label": "Nuestro extractor (MuPDF JSON + Markdown)",
+      "pdf": "01-liviano.pdf",
+      "runs": 5,
+      "median_s": 0.005364399999962188,
+      "min_s": 0.00520709999545943,
+      "peak_mb": 47.59375,
+      "baseline_mb": 46.71875,
+      "chars": 3542
+    },
+    {
+      "engine": "pymupdf4llm",
+      "label": "pymupdf4llm (por defecto, Markdown)",
+      "pdf": "02-mediano.pdf",
+      "runs": 1,
+      "median_s": 18.895775500001037,
+      "min_s": 18.895775500001037,
+      "peak_mb": 307.9375,
+      "baseline_mb": 183.484375,
+      "chars": 44737
+    },
+    {
+      "engine": "pymupdf4llm-liviano",
+      "label": "pymupdf4llm (modo cl\u00e1sico liviano, Markdown)",
+      "pdf": "02-mediano.pdf",
+      "runs": 5,
+      "median_s": 0.43116720000398345,
+      "min_s": 0.406075899998541,
+      "peak_mb": 143.83203125,
+      "baseline_mb": 119.59375,
+      "chars": 44441
+    },
+    {
+      "engine": "pdfplumber",
+      "label": "pdfplumber (texto)",
+      "pdf": "02-mediano.pdf",
+      "runs": 5,
+      "median_s": 1.7014649999910034,
+      "min_s": 1.6285188000038033,
+      "peak_mb": 180.33203125,
+      "baseline_mb": 117.48046875,
+      "chars": 43420
+    },
+    {
+      "engine": "pypdf",
+      "label": "pypdf (texto)",
+      "pdf": "02-mediano.pdf",
+      "runs": 5,
+      "median_s": 0.5324932000075933,
+      "min_s": 0.5119522000022698,
+      "peak_mb": 45.734375,
+      "baseline_mb": 39.69140625,
+      "chars": 43339
+    },
+    {
+      "engine": "pypdfium2",
+      "label": "pypdfium2 (texto)",
+      "pdf": "02-mediano.pdf",
+      "runs": 5,
+      "median_s": 0.04852930000924971,
+      "min_s": 0.045729100005701184,
+      "peak_mb": 29.6484375,
+      "baseline_mb": 28.1875,
+      "chars": 44069
+    },
+    {
+      "engine": "pymupdf-texto",
+      "label": "PyMuPDF get_text (texto)",
+      "pdf": "02-mediano.pdf",
+      "runs": 5,
+      "median_s": 0.03544500000134576,
+      "min_s": 0.033786600004532374,
+      "peak_mb": 48.72265625,
+      "baseline_mb": 47.95703125,
+      "chars": 43369
+    },
+    {
+      "engine": "pymupdf-dict",
+      "label": "PyMuPDF get_text('dict') (texto + tama\u00f1os)",
+      "pdf": "02-mediano.pdf",
+      "runs": 5,
+      "median_s": 0.044480600001406856,
+      "min_s": 0.04303970000182744,
+      "peak_mb": 48.75,
+      "baseline_mb": 48.30859375,
+      "chars": 43339
+    },
+    {
+      "engine": "nuestro",
+      "label": "Nuestro extractor (MuPDF JSON + Markdown)",
+      "pdf": "02-mediano.pdf",
+      "runs": 5,
+      "median_s": 0.035280099997180514,
+      "min_s": 0.03409639999154024,
+      "peak_mb": 48.984375,
+      "baseline_mb": 47.80078125,
+      "chars": 43865
+    },
+    {
+      "engine": "pymupdf4llm",
+      "label": "pymupdf4llm (por defecto, Markdown)",
+      "pdf": "03-extenso.pdf",
+      "runs": 1,
+      "median_s": 171.84480350000376,
+      "min_s": 171.84480350000376,
+      "peak_mb": 326.69140625,
+      "baseline_mb": 200.4765625,
+      "chars": 775039
+    },
+    {
+      "engine": "pymupdf4llm-liviano",
+      "label": "pymupdf4llm (modo cl\u00e1sico liviano, Markdown)",
+      "pdf": "03-extenso.pdf",
+      "runs": 1,
+      "median_s": 11.419525799996336,
+      "min_s": 11.419525799996336,
+      "peak_mb": 144.6953125,
+      "baseline_mb": 123.38671875,
+      "chars": 773506
+    },
+    {
+      "engine": "pdfplumber",
+      "label": "pdfplumber (texto)",
+      "pdf": "03-extenso.pdf",
+      "runs": 1,
+      "median_s": 29.613786400004756,
+      "min_s": 29.613786400004756,
+      "peak_mb": 1524.48046875,
+      "baseline_mb": 1524.4765625,
+      "chars": 770902
+    },
+    {
+      "engine": "pypdf",
+      "label": "pypdf (texto)",
+      "pdf": "03-extenso.pdf",
+      "runs": 1,
+      "median_s": 5.977948399988236,
+      "min_s": 5.977948399988236,
+      "peak_mb": 48.703125,
+      "baseline_mb": 48.6015625,
+      "chars": 768196
+    },
+    {
+      "engine": "pypdfium2",
+      "label": "pypdfium2 (texto)",
+      "pdf": "03-extenso.pdf",
+      "runs": 5,
+      "median_s": 0.6692637999949511,
+      "min_s": 0.6553979000018444,
+      "peak_mb": 38.41796875,
+      "baseline_mb": 30.4921875,
+      "chars": 780268
+    },
+    {
+      "engine": "pymupdf-texto",
+      "label": "PyMuPDF get_text (texto)",
+      "pdf": "03-extenso.pdf",
+      "runs": 5,
+      "median_s": 0.42868969999835826,
+      "min_s": 0.42471890000160784,
+      "peak_mb": 54.9765625,
+      "baseline_mb": 50.546875,
+      "chars": 768488
+    },
+    {
+      "engine": "pymupdf-dict",
+      "label": "PyMuPDF get_text('dict') (texto + tama\u00f1os)",
+      "pdf": "03-extenso.pdf",
+      "runs": 5,
+      "median_s": 0.6401651000051061,
+      "min_s": 0.620595799991861,
+      "peak_mb": 55.38671875,
+      "baseline_mb": 51.3125,
+      "chars": 768196
+    },
+    {
+      "engine": "nuestro",
+      "label": "Nuestro extractor (MuPDF JSON + Markdown)",
+      "pdf": "03-extenso.pdf",
+      "runs": 5,
+      "median_s": 0.4643229999928735,
+      "min_s": 0.4224227999948198,
+      "peak_mb": 55.0234375,
+      "baseline_mb": 52.25390625,
+      "chars": 772920
+    },
+    {
+      "engine": "pymupdf4llm",
+      "label": "pymupdf4llm (por defecto, Markdown)",
+      "pdf": "04-graficos-capas.pdf",
+      "runs": 1,
+      "median_s": 20.432745500002056,
+      "min_s": 20.432745500002056,
+      "peak_mb": 341.40625,
+      "baseline_mb": 218.703125,
+      "chars": 40634
+    },
+    {
+      "engine": "pymupdf4llm-liviano",
+      "label": "pymupdf4llm (modo cl\u00e1sico liviano, Markdown)",
+      "pdf": "04-graficos-capas.pdf",
+      "runs": 5,
+      "median_s": 1.9020692000049166,
+      "min_s": 1.8693070000008447,
+      "peak_mb": 170.84375,
+      "baseline_mb": 135.08203125,
+      "chars": 40394
+    },
+    {
+      "engine": "pdfplumber",
+      "label": "pdfplumber (texto)",
+      "pdf": "04-graficos-capas.pdf",
+      "runs": 1,
+      "median_s": 19.944925800009514,
+      "min_s": 19.944925800009514,
+      "peak_mb": 687.3203125,
+      "baseline_mb": 687.31640625,
+      "chars": 39983
+    },
+    {
+      "engine": "pypdf",
+      "label": "pypdf (texto)",
+      "pdf": "04-graficos-capas.pdf",
+      "runs": 1,
+      "median_s": 5.437925599995651,
+      "min_s": 5.437925599995651,
+      "peak_mb": 65.52734375,
+      "baseline_mb": 65.5234375,
+      "chars": 39895
+    },
+    {
+      "engine": "pypdfium2",
+      "label": "pypdfium2 (texto)",
+      "pdf": "04-graficos-capas.pdf",
+      "runs": 5,
+      "median_s": 0.21392660000128672,
+      "min_s": 0.1891260999982478,
+      "peak_mb": 49.703125,
+      "baseline_mb": 37.7421875,
+      "chars": 40458
+    },
+    {
+      "engine": "pymupdf-texto",
+      "label": "PyMuPDF get_text (texto)",
+      "pdf": "04-graficos-capas.pdf",
+      "runs": 5,
+      "median_s": 0.20915890000469517,
+      "min_s": 0.20231930000591092,
+      "peak_mb": 65.125,
+      "baseline_mb": 57.44921875,
+      "chars": 39895
+    },
+    {
+      "engine": "pymupdf-dict",
+      "label": "PyMuPDF get_text('dict') (texto + tama\u00f1os)",
+      "pdf": "04-graficos-capas.pdf",
+      "runs": 5,
+      "median_s": 0.21946739999111742,
+      "min_s": 0.21509889999288134,
+      "peak_mb": 65.86328125,
+      "baseline_mb": 57.8359375,
+      "chars": 39855
+    },
+    {
+      "engine": "nuestro",
+      "label": "Nuestro extractor (MuPDF JSON + Markdown)",
+      "pdf": "04-graficos-capas.pdf",
+      "runs": 5,
+      "median_s": 0.1990427999990061,
+      "min_s": 0.19010469999921042,
+      "peak_mb": 65.24609375,
+      "baseline_mb": 57.703125,
+      "chars": 40196
+    }
+  ]
+}
